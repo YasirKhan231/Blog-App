@@ -23,10 +23,4 @@ This project is a Medium-like application that allows users to create an account
 - [npm](https://www.npmjs.com/) or [yarn](https://classic.yarnpkg.com/)
 - [Cloudflare Account](https://www.cloudflare.com/)
 
-### Installation
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/yourusername/medium-like-app.git
-   cd medium-like-app
