@@ -12,7 +12,7 @@ export const updateblog  = z.object({
 })
 
 export const signupSchema = z.object({
-  username :z.string().min(1 , "username is required"),
+  username :z.string().email().min(1 , "username is required"),
   password: z.string().min(6, "password should be 6 letter"),
   name  :z.string().optional()
 })
