@@ -2,13 +2,16 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { decode, verify } from 'hono/jwt';
-import { number } from 'zod';
-export const blogRouter=  new Hono<{
+import { z } from 'zod';
+import { postblog, updateblog } from './zod';
+export const  blogRouter=  new Hono<{
   Bindings: {}; // Your bindings if any
   Variables: {
     userId: string; // Ensure 'userId' is correctly defined here
   };
 }>();
+
+
 
 blogRouter.use('/*', async(c,next)=>{
   const authheader = await c.req.header("authorization") || "";
@@ -28,6 +31,13 @@ blogRouter.post('/',async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
+  const result = postblog.safeParse(body);
+  if(!result) {
+    c.status(403);
+     return c.text(" Invalid input ");
+  }
+   else {
+
   const blog = await prisma.blog.create({
     data:{
       title : body.title,
@@ -41,6 +51,7 @@ blogRouter.post('/',async (c) => {
   return c.json({
     id:blog.id
   })
+}
 })
 
 blogRouter.put('/',async (c) => {
@@ -48,6 +59,14 @@ blogRouter.put('/',async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
+
+  const result = updateblog.safeParse(body);
+  if (!result) {
+    c.status(403);
+    return c.text("Invalid input")
+  }
+
+
   const blog = await prisma.blog.update({
     where:{
       id:body.id,
@@ -65,7 +84,6 @@ blogRouter.put('/',async (c) => {
 
 
 blogRouter.get('/bulk', async (c) => {
-  const body = await c.req.json();
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
@@ -75,13 +93,14 @@ blogRouter.get('/bulk', async (c) => {
   })
 })
 
+
 blogRouter.get('/:id',async (c) => {
   const id =  c.req.param("id");
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
 
-  try{
+  try{  
   const blog = await prisma.blog.findFirst({
     where:{
       id: Number(id)
