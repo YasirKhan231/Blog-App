@@ -1,9 +1,8 @@
 import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { decode, verify } from 'hono/jwt';
-import { z } from 'zod';
-import { postblog, updateblog } from './zod';
+import { verify } from 'hono/jwt';
+import {createBlogInput, updateBlogInput} from "@100xdevs/medium-common"
 export const  blogRouter=  new Hono<{
   Bindings: {}; // Your bindings if any
   Variables: {
@@ -31,7 +30,7 @@ blogRouter.post('/',async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
-  const result = postblog.safeParse(body);
+  const result = createBlogInput.safeParse(body);
   if(!result) {
     c.status(403);
      return c.text(" Invalid input ");
@@ -60,7 +59,7 @@ blogRouter.put('/',async (c) => {
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
 
-  const result = updateblog.safeParse(body);
+  const result = updateBlogInput.safeParse(body);
   if (!result) {
     c.status(403);
     return c.text("Invalid input")
