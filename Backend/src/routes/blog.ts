@@ -86,7 +86,18 @@ blogRouter.get('/bulk', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
   }).$extends(withAccelerate())
-  const blog = await prisma.blog.findMany({ })
+  const blog = await prisma.blog.findMany({
+    select :{
+      content :true,
+      title :true ,
+      id :true,
+      author : {
+        select:{
+          name:true,
+        }
+      }
+    }
+   })
   return c.json({
     blog
   })
@@ -102,7 +113,18 @@ blogRouter.get('/:id',async (c) => {
   try{  
   const blog = await prisma.blog.findFirst({
     where:{
-      id: Number(id)
+      id: Number(id), 
+    },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+            select: {
+                name: true
+            }
+        }
+    
     }
   })
   return c.json({

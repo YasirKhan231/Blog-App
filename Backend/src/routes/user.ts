@@ -42,7 +42,7 @@ return c.json({ error :" validation mistake in input"},400);
       id:user.id
     }, "yasirkhan")
 
-    return c.text('Jwt :-' +jwt);
+    return c.text(jwt);
   
     
   } catch (e) {
