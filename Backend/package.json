@@ -2,7 +2,8 @@
   "name": "medium-copy2",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy --minify src/index.ts"
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "start": "wrangler dev src/index.ts"
   },
   "dependencies": {
     "@100xdevs/medium-common": "^1.0.0",
@@ -16,6 +17,6 @@
     "@cloudflare/workers-types": "^4.20240529.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.6",
-    "wrangler": "^3.57.2"
+    "wrangler": "^3.99.0"
   }
 }
