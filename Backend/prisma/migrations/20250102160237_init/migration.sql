@@ -1,19 +1,12 @@
+-- CreateTable
+CREATE TABLE "User" (
+    "name" TEXT,
+    "password" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
 
-ALTER TABLE "Post" DROP CONSTRAINT "Post_authorId_fkey";
-
--- DropIndex
-DROP INDEX "User_email_key";
-
--- AlterTable
-ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
-DROP COLUMN "email",
-ADD COLUMN     "username" TEXT NOT NULL,
-DROP COLUMN "id",
-ADD COLUMN     "id" SERIAL NOT NULL,
-ADD CONSTRAINT "User_pkey" PRIMARY KEY ("id");
-
--- DropTable
-DROP TABLE "Post";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Blog" (

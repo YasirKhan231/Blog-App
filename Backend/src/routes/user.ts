@@ -3,12 +3,11 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 const app = new Hono()
 import {  sign } from 'hono/jwt'
+import * as dotenv from 'dotenv';
+dotenv.config();  // Loads .env file into process.env
+
 export const userRouter  = new Hono();
 import {signinInput, signupInput} from "@100xdevs/medium-common"
-
-
-
-
 
 userRouter.post('/signup', async (c) => {
   const body = await c.req.json()
@@ -20,7 +19,7 @@ return c.json({ error :" validation mistake in input"},400);
 
   const {username , password , name} = result.data;
   const prisma = new PrismaClient({
-    datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
+    datasourceUrl: process.env.datasourceUrl
   }).$extends(withAccelerate())
  try {
  const existinguser = await prisma.user.findUnique( {
@@ -48,14 +47,14 @@ return c.json({ error :" validation mistake in input"},400);
   } catch (e) {
     c.status(403)
     console.log("mistake is " + e);
-    return c.text('Invalid')
+    return c.text(`Invalid is this schema + ${e} `)
   }
 })
 
 userRouter.post('/signin',async (c) => {
   const body = await c.req.json();
   const prisma = new PrismaClient({
-    datasourceUrl: "prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZmEwZDFiNzctYWNlMy00NTMyLWEyYzQtZGU0MzQ1NGMzODE0IiwidGVuYW50X2lkIjoiNDc2MDEwYWY0MTNlNmNlZmNlYTlhMDFkZDJjY2Y1MmQwMTNhMmZiYTI3ZjIwODJiNTA0MThkZWZlOWUzMWUxMyIsImludGVybmFsX3NlY3JldCI6IjVhZWQyZTZiLWI4MTktNGU3YS1hY2E0LTJlODMyNjQxNjA0ZCJ9.qNbgt6s9lcz5Nx7B_YT-HgHbvHFcrBQ9jE_cU-8Zqmw"
+    datasourceUrl: process.env.datasourceUrl
   }).$extends(withAccelerate())
 
   const result = await signinInput.safeParse(body);
